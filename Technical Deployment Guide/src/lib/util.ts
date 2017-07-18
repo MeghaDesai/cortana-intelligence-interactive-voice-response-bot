@@ -34,7 +34,7 @@ export function getEntityScopes(entities: Entity[], mapping: SearchEntityMapping
     })
     .filter((x) => x.mapping)
     .map((x) => {
-      const canonical = _.keys(x.entity.resolution)[0];
+      const canonical = x.entity.resolution.values[0];
       const weight = x.mapping.weight ? `^${x.mapping.weight}` : '';
       return `${x.mapping.field}:'${canonical}'${weight}`;
     }).join(' ');
