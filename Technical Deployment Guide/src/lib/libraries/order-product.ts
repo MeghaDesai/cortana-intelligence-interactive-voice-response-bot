@@ -7,7 +7,7 @@ import {
 import { IUnderstandResult, SpeechDialog } from 'botbuilder-calling-speech';
 import { LuisResult } from "cognitive-luis-client";
 import { APP, ProductSkuSelection } from '../app';
-import { prompt, promptChoices } from '../util';
+import { prompt, promptChoices, rejectSubEntities } from '../util';
 
 const ORDER_PRODUCT_NAME = 'OrderProduct';
 const ORDER_PRODUCT_ROOT = '/';
@@ -81,7 +81,7 @@ ORDER_PRODUCT_LIB.dialog('/findProduct', [
   (session: CallSession, args: IProductResult, next) => {
     const luis: LuisResult = session.dialogData.luis;
     session.beginDialog('/chooseProductSKU', {
-      entities: luis.entities,
+      entities: rejectSubEntities(luis.entities),
       product: args.response.name,
       selected: {},
       skus: JSON.parse(args.response.products || '{}'),

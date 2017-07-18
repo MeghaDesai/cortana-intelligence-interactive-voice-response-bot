@@ -40,6 +40,16 @@ export function getEntityScopes(entities: Entity[], mapping: SearchEntityMapping
     }).join(' ');
 }
 
+export function rejectSubEntities(entities: Entity[]): Entity[] {
+  return entities.filter((x, i, array) => {
+    return !array.some((y) => x !== y && isSubEntity(x, y));
+  });
+
+  function isSubEntity(a: Entity, b: Entity): boolean {
+    return a.startIndex >= b.startIndex && a.endIndex <= b.endIndex;
+  }
+}
+
 export function hasAllEntities(document: SearchResultDocument, entities: Entity[], mapping: SearchEntityMapping[]): boolean {
   return entities
     .map((x) => ({
