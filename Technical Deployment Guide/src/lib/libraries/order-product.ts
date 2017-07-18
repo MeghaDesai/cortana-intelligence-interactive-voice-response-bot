@@ -97,7 +97,7 @@ ORDER_PRODUCT_LIB.dialog('/chooseProductName', [
   (session: CallSession, args: SearchResultDocument[], next) => {
     const matches: SearchResultDocument[] = session.dialogData.matches = args;
     const choices = matches.map((x) => ({name: x.name }));
-    const choicesText = choices.map((x, i) => `For ${x.name}, say ${i + 1}}.`).join(' ');
+    const choicesText = choices.map((x, i) => `For ${x.name}, say ${i + 1}.`).join(' ');
     const promptText = `I found ${matches.length} matches. ${choicesText}`; // TODO or, start over
     SpeechDialog.understandChoice(session, promptText, { choices });
   },
