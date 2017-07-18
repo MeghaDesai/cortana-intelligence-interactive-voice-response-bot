@@ -19,7 +19,9 @@ export const LOOKUP_ORDER_LIB = new Library(LOOKUP_ORDER_NAME);
 
 const CUSTOMER_IDS = [29531, 29584, 29612, 29644, 29741, 29781, 29847, 30025, 30072, 30089];
 
-interface SQLRow {[name: string]: ColumnValue;}
+interface SQLRow {
+  [name: string]: ColumnValue;
+}
 
 function onError(session: CallSession, err: Error): void {
   session.error(err);
