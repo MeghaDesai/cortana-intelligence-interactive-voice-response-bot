@@ -91,7 +91,7 @@ function continueOnFileNotExists(callback: Callback): Callback {
 
 function continueOnAppExists(callback: Callback): Callback {
   return (err: Error, resp: ManagementResponse) => {
-    if (err && _.get<string>(resp, 'body.error.message') === ERROR_APP_EXISTS) {
+    if (err && _.get(resp, 'body.error.message') === ERROR_APP_EXISTS) {
       findAppId(callback);
     } else {
       callback(err, resp);
@@ -101,7 +101,7 @@ function continueOnAppExists(callback: Callback): Callback {
 
 function continueOnKeyExists(callback: Callback): Callback {
   return (err: Error, resp: ManagementResponse) => {
-    if (err && _.get<string>(resp, 'body.error.message') === ERROR_KEY_EXISTS) {
+    if (err && _.get(resp, 'body.error.message') === ERROR_KEY_EXISTS) {
       callback(null, {body: LUIS_MANAGER_SETTINGS.endPointKey});
     } else {
       callback(err, resp);
