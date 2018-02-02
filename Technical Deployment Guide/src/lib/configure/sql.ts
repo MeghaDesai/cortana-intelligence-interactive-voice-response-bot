@@ -13,6 +13,7 @@ export default function(callback: Callback): void {
 }
 
 function processScripts(callback: Callback) {
+  console.log('[configuration:sql] executing scripts');
   async.series([
     (next: Callback) => executeScript(SQL, 'functions/ufnGetCategory.sql', next),
     (next: Callback) => executeScript(SQL, 'functions/ufnGetColorsJson.sql', next),
@@ -21,11 +22,13 @@ function processScripts(callback: Callback) {
     (next: Callback) => executeScript(SQL, 'functions/ufnGetSizesJson.sql', next),
     (next: Callback) => executeScript(SQL, 'functions/ufnIsDeleted.sql', next),
     (next: Callback) => executeScript(SQL, 'views/vProductsForSearch.sql', next),
+    (next: Callback) => executeScript(SQL, 'tables/ProductsForSearch.sql', next),
     (next: Callback) => closeSQL(next),
   ], callback);
 }
 
 function closeSQL(callback: Callback): void {
+  console.log('[configuration:sql] closing connection');
   SQL.close();
   callback(null);
 }

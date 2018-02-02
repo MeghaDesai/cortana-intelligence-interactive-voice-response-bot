@@ -4,7 +4,7 @@
   "subtype": null,
   "description": null,
   "container": {
-    "name": "[SalesLT].[vProductsForSearch]",
+    "name": "[SalesLT].[ProductsForSearch]",
     "query": null
   },
   "credentials": {

@@ -48,14 +48,14 @@ Stores product and order data
 Stores bot audio data for debugging
 
 # Build
-This project is built using TypeScript. Your environment should have the ["current" NodeJS runtime][11] in order to build the project.
+This project is coded in TypeScript. Your environment should have the ["current" NodeJS runtime][11] in order to build the project.
 
 > If you are only interested in **[automated deployment](#automated-arm-deployment)**, you may skip this section.
 
 After cloning this repo, run the following shell commands from the repo root:
 1. `npm install`
 1. `npm run build`
-1. Copy `./package.json`, `./web.config`, `./src/bot-settings.json`, and `./data` to `./dist`
+1. Copy `./package.json`, `./web.config`, `./bot-settings.json`, and `./data` to `./dist`
 1. `cd dist`
 1. `npm install --production`
 
@@ -66,8 +66,8 @@ After cloning this repo, run the following shell commands from the repo root:
 Create the following resources using the [Azure Portal][12], [PowerShell][13], or [Azure CLI][14].
 > Unless otherwise noted, use any configuration and scale parameters you like
 * `Azure Storage`
-* `Cosmos DB` (*with* SQL / DocumentDB API)
-* `Azure SQL` (*with* AdventureWorksLT sample DB)
+* `Cosmos DB` (with SQL / DocumentDB API)
+* `Azure SQL` (with AdventureWorksLT sample DB)
 * `Azure Search`
 * `Azure App Service`
 * `Cognitive Service` keys:
@@ -76,22 +76,7 @@ Create the following resources using the [Azure Portal][12], [PowerShell][13], o
 
 ## Configure Azure Resources
 
-### Register your bot
-> See guided screenshots for [bot registration][REL1] and [enabling Skype Calling][REL2]
-
-1. Register a new bot at the [Bot Framework Portal][15]
-1. Create a new Microsoft App, and make note of its **ID** and **Secret**
-1. Leave the messaging endpoint blank for now
-1. After your bot is registered, click through to its Skype Channel and ensure that **Skype Calling is enabled**. Your calling endpoint is `https://YOUR_WEB_APP.azurewebsites.net/api/calls`
-
-
-### Find your LUIS programmatic key
-> See guided screenshots for finding the [LUIS programmatic key][REL3]
-
-1. Log in to the [LUIS Portal][16]
-1. Navigate to the `My Keys` tab
-1. Make a note of your `Programmatic API Key`
-
+> Before continuing, you must gather the [required user parameters][REL5].
 
 ### Azure App Service Application Settings
 Create the following application settings on your Web App:
@@ -107,7 +92,7 @@ Create the following application settings on your Web App:
 | MICROSOFT_APP_PASSWORD | **YOUR_APP_SECRET** |
 | LUIS_REGION | westus (or your region, if different) |
 | LUIS_KEY | **YOUR_LUIS_KEY** |
-| LUIS_MANAGER_KEY | **YOUR_LUIS_PROGRAMATIC_KEY** |
+| LUIS_MANAGER_KEY | **YOUR_LUIS_PROGRAMATIC_KEY** ([help][REL6]) |
 | LUIS_APP_ID | (empty) |
 | SPEECH_KEY | **YOUR_SPEECH_KEY** |
 | SPEECH_ENDPOINT | https://speech.platform.bing.com/recognize |
@@ -128,22 +113,40 @@ Create the following application settings on your Web App:
 | STORE_DDB_DATABASE | bot-data |
 | STORE_DDB_COLLECTION | bot-sessions |
 
+> If you need to run the web app locally, you can easily clone an existing Azure web app's configuration to your local environment using the Azure CLI and jq:
+> `az webapp config appsettings list --resource-group {your-resource-group} --name {your-app-name} | jq ". | map({key:.name, value}) | from_entries" > ./dist/environment.json`
+> *Be sure to update CALLBACK_URL and your bot registration endpoints (found in the Azure Portal) to your ngrok URL*
+
 ### Deploy bot to Azure App Service
 After building the project (see [build](#build)), upload the contents of `dist` to your App Service
-> Learn how to upload files to a web app using [FTP and PowerShell][18]
+> **Using Azure CLI**  
+> see `az webapp deployment source config-zip -h`
 >
-> You can also deploy from the command line using [WebDeploy][19]
+> **Using Web Browser**  
+> [Read more about Kudu][33]
+>
+> **Using PowerShell**  
+> [Read more about FTP and PowerShell][18]
+>
+> **Using msdeploy**  
+> [Read more about WebDeploy][19]
 
 # Automated ARM Deployment
 *If you want to quickly deploy this solution without touching any code you should use the automated [Cortana Intelligence Quick Start portal][30].*
 
 To automatically create, configure, and deploy all Azure resources at once, run the following commands in PowerShell (or use your favorite ARM deployment tool):
-> You will be prompted for **three** configuration parameters. See the [Bot Registration Guide][REL1] and the [LUIS Programmatic-Key Guide][REL3] if you need help finding these values.
+> You will be prompted for **four** configuration parameters. See [Required Parameters][REL5] if you need help finding these values.
+
+## Azure CLI deployment
+```Bash
+az group create --name ExampleGroup --location eastus
+az group deployment create --resource-group ExampleGroup --template-file ./azuredeploy.json
+```
+
+## PowerShell deployment
 ```PowerShell
-$rg = "ivr-bot"
-$loc = "eastus"
-New-AzureRmResourceGroup $rg $loc
-New-AzureRmResourceGroupDeployment -Name IVRBotSolution -ResourceGroupName $rg -TemplateFile .\azuredeploy.json
+New-AzureRmResourceGroup ExampleGroup eastus
+New-AzureRmResourceGroupDeployment -ResourceGroupName ExampleGroup -TemplateFile .\azuredeploy.json
 ```
 
 > If you have questions or issues about your automated deployment, please reach out to [Cortana Intelligence Solutions][31]. If this solution was helpful to you, please consider `starring` or `forking` this repo.
@@ -153,9 +156,9 @@ You will use the [Skype Client][20] to initiate calls to your bot (for Skype for
 
 > **Windows Users** may use the [App Store Client][21]
 
-Before talking to your bot, you must add it to your Skype contacts list. You can find a link to add your bot to Skype on the [Bot Portal][2] under the channel listing.
+Before talking to your bot, you must add it to your Skype contacts list. You can find a link to add the bot to your Skype Contacts on the Azure Portal on the page of yoru bot registration, under the channels listing.
 
-> Directly add the bot to your contacts: https://join.skype.com/bot/YOUR_APP_ID
+> Add the bot to your contacts: https://join.skype.com/bot/{YOUR_APP_ID}
 
 Using your Skype client, initiate a call to your bot and follow the prompts. You can order any product in the AdventureWorks product inventory, such as a mountain bike, fenders, or bike wash. The bot will prompt you to choose a matching product or to choose product attributes, as needed.
 
@@ -414,10 +417,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 [IMG1]: ./docs/img/arch.png
-[REL1]: ./docs/Bot-Registration.md
-[REL2]: ./docs/Enable-Skype-Calling.md
-[REL3]: ./docs/LUIS-Programmatic-Key.md
 [REL4]: ./data/sql/views/vProductsForSearch.sql
+[REL5]: ./docs/required-parameters.md
+[REL6]: ./docs/find-luis-programmatic-key.md
 [1]: https://www.skype.com/
 [2]: https://dev.botframework.com/
 [3]: https://dev.skype.com/bots
@@ -450,3 +452,4 @@ SOFTWARE.
 [30]: https://gallery.cortanaintelligence.com/Solution/interactive-voice-response-bot
 [31]: mailto:cisolutions@microsoft.com
 [32]: https://msdn.microsoft.com/en-us/skype/skype-for-business-bot-framework/docs/overview#add-bot
+[33]: https://github.com/projectkudu/kudu/wiki/Kudu-console#upload-and-expand-zip-file

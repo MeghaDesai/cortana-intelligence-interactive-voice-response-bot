@@ -1,9 +1,9 @@
 import { IChatConnectorSettings } from 'botbuilder';
 import { ICallConnectorSettings, IUniversalCallBotSettings } from 'botbuilder-calling';
-import path = require('path');
 import fs = require('fs');
-import _ = require('lodash');
 import https = require('https');
+import _ = require('lodash');
+import path = require('path');
 
 // tslint:disable:no-string-literal
 https.globalAgent['keepAlive'] = true;
@@ -63,7 +63,7 @@ export const SEARCH_SETTINGS = {
   index: 'adventureworks',
   key: config('SEARCH_KEY'),
   service: config('SEARCH_SERVICE'),
-  version: '2015-02-28-preview',
+  version: '2016-09-01-Preview',
 };
 
 export const LOG_SETTINGS = {

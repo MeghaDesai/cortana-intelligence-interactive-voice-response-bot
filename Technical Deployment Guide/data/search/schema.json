@@ -319,7 +319,7 @@
       "name": "sizeAnalyzer",
       "@odata.type": "#Microsoft.Azure.Search.CustomAnalyzer",
       "charFilters": [],
-      "tokenizer": "standard",
+      "tokenizer": "standard_v2",
       "tokenFilters": [
         "sizeSynonyms",
         "lowercase"

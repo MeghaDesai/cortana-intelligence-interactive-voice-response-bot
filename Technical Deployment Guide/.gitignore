@@ -4,3 +4,5 @@ src/environment.json
 .vscode
 log
 *.log
+azuredeploy.parameters.json
+ngrok.yml
